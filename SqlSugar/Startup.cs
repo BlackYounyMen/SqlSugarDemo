@@ -56,6 +56,8 @@ namespace SqlSugar
             app.UseAuthorization();
             app.UseSwaggerUI(c =>
             {
+                c.SwaggerEndpoint("/swagger/Home/swagger.json", "SqlSugar基础法则");
+                c.SwaggerEndpoint("/swagger/SQL/swagger.json", "SqlSugar对服务器操作");
                 c.SwaggerEndpoint("/swagger/Base/swagger.json", "基础使用法");
                 c.SwaggerEndpoint("/swagger/Package/swagger.json", "封装使用法");
             });
@@ -69,6 +71,16 @@ namespace SqlSugar
         {
             services.AddSwaggerGen(options =>
             {
+                options.SwaggerDoc("Home", new OpenApiInfo
+                {
+                    Version = "v1.0",
+                    Title = "SqlSugar基础法则"
+                });
+                options.SwaggerDoc("SQL", new OpenApiInfo
+                {
+                    Version = "v1.0",
+                    Title = "SqlSugar基础法则"
+                });
                 options.SwaggerDoc("Base", new OpenApiInfo
                 {
                     Version = "v1.0",

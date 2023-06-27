@@ -21,19 +21,18 @@ namespace SqlSugar.Controllers
         {
             _configuration = configuration;
             _context = GetInstance();
-            _context = GetInstance();
         }
 
         private SqlSugarClient GetInstance()
         {
-            SqlSugarClient db = new SqlSugarClient(new ConnectionConfig
+            SqlSugarClient _context = new SqlSugarClient(new ConnectionConfig
             {
                 ConnectionString = _configuration.GetConnectionString("SqlServerConnection"),//连接符字串
                 DbType = SqlSugar.DbType.SqlServer,
                 IsAutoCloseConnection = true,
                 InitKeyType = InitKeyType.Attribute//从特性读取主键自增信息
             });
-            return db;
+            return _context;
         }
 
         #region 简单语法
