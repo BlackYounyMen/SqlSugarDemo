@@ -40,11 +40,16 @@ namespace SqlSugarInter.Controllers
         /// </summary>
         /// <param name="spacename"></param>
         [HttpGet("GetCsFile")]
-        public void GetCsFile(string spacename)
+        public string GetCsFile(string spacename)
         {
+            if (spacename == null)
+            {
+                return "必须输入命名空间";
+            }
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CSFile");
 
             _context.DbFirst.IsCreateAttribute().CreateClassFile(path, spacename);
+            return "生成的实体的目标位置是：    " + path;
         }
 
         /// <summary>
@@ -56,7 +61,7 @@ namespace SqlSugarInter.Controllers
         {
             Dictionary<string, object> dic = new Dictionary<string, object>();
 
-            #region 由于需要插入数据，所以没有正常使用
+            #region 由于需要插入数据，所以没有正常使用 （“会往数据库里面添加数据”）
 
             Student student1 = new Student()
             {
@@ -89,7 +94,7 @@ namespace SqlSugarInter.Controllers
             dic.Add("单条插入返回雪花ID", id.ToString());
             dic.Add("多条插入批量返回,ID", ids);
 
-            #endregion 由于需要插入数据，所以没有正常使用
+            #endregion 由于需要插入数据，所以没有正常使用 （“会往数据库里面添加数据”）
 
             SnowFlakeSingle.WorkId = 1; //从配置文件读取一定要不一样
                                         //服务器时间修改一定也要修改WorkId
