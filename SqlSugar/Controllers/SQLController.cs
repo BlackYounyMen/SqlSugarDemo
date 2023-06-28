@@ -8,6 +8,7 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Model.CrossQuery;
 
 namespace SqlSugarInter.Controllers
 {
@@ -101,16 +102,8 @@ namespace SqlSugarInter.Controllers
         [HttpGet("TableJoin")]
         public string TableJoin()
         {
-            string connectionString = _configuration.GetConnectionString("SqlServerConnection"); // 替换为你的数据库连接字符串
-
-            SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
-            {
-                ConnectionString = connectionString,
-                DbType = DbType.SqlServer, // 替换为你使用的数据库类型
-                IsAutoCloseConnection = true,
-            });
             // 执行联查查询
-            var result = db.Queryable<Student, School>((a, b) => a.Id == b.Id)
+            var result = _context.Queryable<Student, School>((a, b) => a.Id == b.Id)
                 .Select((a, b) => new
                 {
                     a.Id,
@@ -121,6 +114,81 @@ namespace SqlSugarInter.Controllers
                 .ToList();
 
             return JsonConvert.SerializeObject(result);
+        }
+
+        /// <summary>
+        /// 创建数据库(DB1)
+        /// </summary>
+        [HttpGet("CreateDataBaseDB1")]
+        public string CreateDataBaseDB1()
+        {
+            SqlSugarClient _db = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = _configuration.GetConnectionString("db1"),//连接符字串
+                DbType = SqlSugar.DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute//从特性读取主键自增信息
+            });
+
+            //建库：如果不存在创建数据库存在不会重复创建
+            _db.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库
+
+            /***创建单个表***/
+            _db.CodeFirst.SetStringDefaultLength(200).InitTables(typeof(Order));//这样一个表就能成功创建了
+
+            return "你在此" + _configuration.GetConnectionString("db1").ToString() + "服务器上面创建Order数据库";  //可以实现一键生成数据库脚本
+        }
+
+        /// <summary>
+        /// 创建数据库(DB2)
+        /// </summary>
+        [HttpGet("CreateDataBaseDB2")]
+        public string CreateDataBaseDB2()
+        {
+            SqlSugarClient _db = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = _configuration.GetConnectionString("db2"),//连接符字串
+                DbType = SqlSugar.DbType.SqlServer,
+                IsAutoCloseConnection = true,
+                InitKeyType = InitKeyType.Attribute//从特性读取主键自增信息
+            });
+
+            //建库：如果不存在创建数据库存在不会重复创建
+            _db.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库
+
+            /***创建单个表***/
+            _db.CodeFirst.SetStringDefaultLength(200).InitTables(typeof(OrderItem));//这样一个表就能成功创建了
+
+            return "你在此" + _configuration.GetConnectionString("db2").ToString() + "服务器上面创建OrderItem数据库";  //可以实现一键生成数据库脚本
+        }
+
+        /// <summary>
+        /// 跨库的两表联查
+        /// </summary>
+        [HttpGet("CrossTableJoin")]
+        public string CrossTableJoin()
+        {
+            var db = new SqlSugarClient(new List<ConnectionConfig>()
+            {
+              new ConnectionConfig(){ConfigId="db1",DbType=DbType.Sqlite,
+              ConnectionString="DataSource=/Db_OrderDb.sqlite",IsAutoCloseConnection=true},
+
+              new ConnectionConfig(){ConfigId="db2",DbType=DbType.Sqlite,
+              ConnectionString="DataSource=/Db_OrderItemDb.sqlite",IsAutoCloseConnection=true }
+            });
+
+            //不通过特性实现跨库导航
+            var list = db.GetConnection("db1").Queryable<OrderItem>()//Orderitem是db1
+                           .CrossQuery(typeof(Order), "db2")//Order是db2
+                           .Includes(z => z.Order)
+                           .ToList();
+
+            //通过实体类特性Tenant自动映射不同数据库进行查询
+            var list1 = db.QueryableWithAttr<OrderItem>()
+            .Includes(z => z.Order)
+            .ToList(); //1行代码就搞定了2个库联表查询
+
+            return JsonConvert.SerializeObject(list);
         }
     }
 }

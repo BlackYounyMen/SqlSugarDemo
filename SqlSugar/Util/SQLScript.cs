@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 
-namespace SqlSugarInter
+namespace SqlSugarInter.Util
 {
     public class SQLScript
     {
