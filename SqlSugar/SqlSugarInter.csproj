@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\CSFile\" />
+    <Folder Include="wwwroot\File\" />
   </ItemGroup>
 
 </Project>

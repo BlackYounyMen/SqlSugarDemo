@@ -107,7 +107,7 @@ namespace SqlSugar.Controllers
             var predicate = PredicateBuilder.New<School>(true);
             predicate.And(t => t.Id == id);
 
-            //_dbContext.SchoolDb.GetById(id);
+            //_dbContext.SchoolDb.GetById(id);   //此种语句试用与id是主键并且自增的地方
 
             //sqlsugar 语法
 

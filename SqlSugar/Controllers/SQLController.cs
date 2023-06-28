@@ -7,6 +7,7 @@ using SqlSugar;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SqlSugarInter.Controllers
 {
@@ -66,13 +67,17 @@ namespace SqlSugarInter.Controllers
             Dictionary<string, object> dic = new Dictionary<string, object>();
             string connectionString = _configuration.GetConnectionString("SqlServerConnection"); // 替换为你的数据库连接字符串
 
+            #region 根据所选的字符串进行截取出数据库名称
+
             int startIndex = connectionString.IndexOf("Database=") + "Database=".Length;
             int endIndex = connectionString.IndexOf(";", startIndex);
 
             string databaseName = connectionString.Substring(startIndex, endIndex - startIndex);
 
-
             dic.Add("你使用的数据库是", databaseName);
+
+            #endregion 根据所选的字符串进行截取出数据库名称
+
             SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
             {
                 ConnectionString = connectionString,
@@ -80,7 +85,7 @@ namespace SqlSugarInter.Controllers
                 IsAutoCloseConnection = true,
             });
 
-            var tableNames = db.DbMaintenance.GetTableInfoList().Select(t => t.Name).ToList();
+            var tableNames = db.DbMaintenance.GetTableInfoList().Select(t => t.Name).ToList();   //查询出所有的表名
             var i = 1;
             foreach (var tableName in tableNames)
             {
@@ -88,6 +93,34 @@ namespace SqlSugarInter.Controllers
                 i++;
             }
             return dic;
+        }
+
+        /// <summary>
+        /// 最为简单的两表联查
+        /// </summary>
+        [HttpGet("TableJoin")]
+        public string TableJoin()
+        {
+            string connectionString = _configuration.GetConnectionString("SqlServerConnection"); // 替换为你的数据库连接字符串
+
+            SqlSugarClient db = new SqlSugarClient(new ConnectionConfig()
+            {
+                ConnectionString = connectionString,
+                DbType = DbType.SqlServer, // 替换为你使用的数据库类型
+                IsAutoCloseConnection = true,
+            });
+            // 执行联查查询
+            var result = db.Queryable<Student, School>((a, b) => a.Id == b.Id)
+                .Select((a, b) => new
+                {
+                    a.Id,
+                    a.Name,
+                    schoolname = b.Name,
+                    b.Principal
+                })
+                .ToList();
+
+            return JsonConvert.SerializeObject(result);
         }
     }
 }

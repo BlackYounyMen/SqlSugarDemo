@@ -30,6 +30,7 @@ namespace Core
         { get { return new DbSet<School>(Db); } }//用来处理School表的常用操作
     }
 
+    //有了这个可以不在用创建Repository层
     public class DbSet<T> : SimpleClient<T> where T : class, new()
     {
         public DbSet(SqlSugarClient context) : base(context)

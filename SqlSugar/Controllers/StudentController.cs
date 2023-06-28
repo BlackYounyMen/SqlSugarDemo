@@ -9,6 +9,9 @@ using System.Collections.Generic;
 namespace SqlSugar.Controllers
 {
     //引用工具        Masuit.Tools
+
+    // _context.Insertable<Student>(student).ExecuteCommand()   严格来说这种写法最为标准
+    // _context.Insertable(student).ExecuteCommand()   貌似这样也可以，好像会自动识别
     [Route("api/[controller]")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "Base")]
@@ -62,7 +65,7 @@ namespace SqlSugar.Controllers
         /// <summary>
         /// 删除
         /// </summary>
-        /// <param name="student"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost("Delete")]
         public int Delete(int id)

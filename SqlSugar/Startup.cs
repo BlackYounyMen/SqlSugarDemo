@@ -51,13 +51,18 @@ namespace SqlSugar
                 app.UseSwagger();
             }
 
+            app.UseStaticFiles();
+            app.UseCors(o => o.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
             app.UseRouting();
 
             app.UseAuthorization();
+            //配置Swagger UI的终端节点（Endpoint）和对应的Swagger JSON文件。
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/Home/swagger.json", "SqlSugar基础法则");
                 c.SwaggerEndpoint("/swagger/SQL/swagger.json", "SqlSugar对服务器操作");
+                c.SwaggerEndpoint("/swagger/File/swagger.json", "文件操控");
                 c.SwaggerEndpoint("/swagger/Base/swagger.json", "基础使用法");
                 c.SwaggerEndpoint("/swagger/Package/swagger.json", "封装使用法");
             });
@@ -67,6 +72,10 @@ namespace SqlSugar
             });
         }
 
+        /// <summary>
+        /// 配置Swagger生成器（SwaggerGen）的相关选项和文档信息
+        /// </summary>
+        /// <param name="services"></param>
         public void AddSwaggerGenServic(IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
@@ -80,6 +89,11 @@ namespace SqlSugar
                 {
                     Version = "v1.0",
                     Title = "SqlSugar基础法则"
+                });
+                options.SwaggerDoc("File", new OpenApiInfo
+                {
+                    Version = "v1.0",
+                    Title = "文件操控"
                 });
                 options.SwaggerDoc("Base", new OpenApiInfo
                 {
