@@ -3,6 +3,9 @@ using SqlSugar;
 using System;
 using System.Data;
 using Microsoft.Extensions.DependencyInjection; // 引用 Microsoft.Extensions.DependencyInjection 命名空间，用于在 ConfigureServices 方法中注册服务
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using Models;
 
 namespace Core
 {
@@ -35,6 +38,22 @@ namespace Core
     {
         public DbSet(SqlSugarClient context) : base(context)
         {
+        }
+
+        public virtual Page<T> GetPageList(Expression<Func<T, bool>> whereExpression, Page<T> page)
+        {
+            int totalNumber = 0;
+            page.data = Context.Queryable<T>().Where(whereExpression).ToPageList(page.PageIndex, page.PageSize, ref totalNumber);
+            page.TotalCount = totalNumber;
+            return page;
+        }
+
+        public virtual async Task<Page<T>> GetPageListAsync(Expression<Func<T, bool>> whereExpression, Page<T> page)
+        {
+            RefAsync<int> count = 0;
+            page.data = await Context.Queryable<T>().Where(whereExpression).ToPageListAsync(page.PageIndex, page.PageSize, count);
+            page.TotalCount = count;
+            return page;
         }
     }
 }

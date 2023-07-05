@@ -1,4 +1,5 @@
 ﻿using Core;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,8 @@ namespace SqlSugarInter.Controllers
         /// <returns></returns>
         private static bool IsFilePath(string path)
         {
+            if (string.IsNullOrEmpty(path)) return false;
+
             // 检查是否包含路径分隔符
             if (path.Contains(Path.DirectorySeparatorChar.ToString()) || path.Contains(Path.AltDirectorySeparatorChar.ToString()))
             {
@@ -137,6 +140,38 @@ namespace SqlSugarInter.Controllers
             SQLScript sqlscript = new SQLScript(_configuration);
             var data = sqlscript.UsingSql(sql);
             return JsonConvert.SerializeObject(data);
+        }
+
+        /// <summary>
+        /// 生成kingbase实体文件
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="spacename"></param>
+        /// <param name="kingbase">链接数据库</param>
+        [HttpGet("GetKingBaseFile")]
+        public string GetKingBaseFile(string path, string spacename, string kingbase = "Host=10.168.1.138;Port=54321;database=demo;uid=system;pwd=123456;searchpath=khzn")
+        {
+            if (string.IsNullOrEmpty(kingbase)) kingbase = _configuration.GetConnectionString("kingbase");
+
+            if (spacename == null)
+            {
+                return "必须输入命名空间";
+            }
+            if (!IsFilePath(path))
+            {
+                path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CSFile");
+            }
+
+            SqlSugarClient _context = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = kingbase,//连接符字串
+                DbType = SqlSugar.DbType.PostgreSQL,
+                IsAutoCloseConnection = false,
+                InitKeyType = InitKeyType.Attribute//从特性读取主键自增信息
+            });
+
+            _context.DbFirst.IsCreateAttribute().CreateClassFile(path, spacename);
+            return "生成的实体的目标位置是：    " + path;
         }
     }
 }

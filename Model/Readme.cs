@@ -10,7 +10,7 @@ namespace Model
     {
         #region 语法
 
-        //[[Tenant("db2")] ] :  用于指定其他数据库 
+        //[[Tenant("db2")] ] :  用于指定其他数据库
 
         //[SugarColumn]: 用于指定实体属性对应数据库表中的列名或其他属性，例如指定列名、设置主键、标识列等。
 
@@ -30,7 +30,6 @@ namespace Model
 
         //[SugarColumn(DefaultValue = "default")]: 用于指定实体属性映射的数据库列的默认值。
 
-        #endregion
-
+        #endregion 语法
     }
 }
