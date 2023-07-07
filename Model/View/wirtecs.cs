@@ -44,6 +44,72 @@ namespace Model.View
             File.WriteAllText(path, fileContent);
         }
 
+        public static void WirteCreateServices(string path, string spacename, string ControllerName, bool isShow)
+        {
+            string updatedName = ControllerName + "Service";
+
+            path = path + "\\" + updatedName + ".cs";
+
+            StringBuilder sb = new StringBuilder();
+            if (isShow)
+            {
+                sb.Append("using System;  \n");
+                sb.Append("using System.Linq;  \n");
+                sb.Append("using System.Text;  \n");
+
+                sb.Append("using khzn.Models;  \n");
+                sb.Append("using KHZN.Support.Service;  \n");
+            }
+
+            sb.Append("namespace " + spacename + "{" + "\n\n");
+
+            sb.Append("public class " + updatedName + " : BLLService<" + ControllerName + ">{" + "\n\n");
+            sb.Append("public override void Validator(ValidatorType type)   {}");
+            sb.Append("}  \n");
+            sb.Append("}  \n");
+
+            var fileContent = sb.ToString();
+
+            // 使用 File 类的 WriteAllText 方法创建并写入文件
+            File.WriteAllText(path, fileContent);
+        }
+
+        public static void WirteControllerFile(string path, string spacename, string ControllerName, bool isShow)
+        {
+            path = path + "\\" + ControllerName + ".cs";
+
+            string updatedName = ControllerName.Replace("Controller", "Service");
+
+            StringBuilder sb = new StringBuilder();
+            if (isShow)
+            {
+                sb.Append("using System;  \n");
+                sb.Append("using System.Linq;  \n");
+                sb.Append("using System.Text;  \n");
+
+                sb.Append("using KHZN.Kernel.Services;  \n");
+                sb.Append("using KHZN.Support.Attribute;  \n");
+                sb.Append("using KHZN.Support.Controller;  \n");
+            }
+
+            sb.Append("namespace " + spacename + "{" + "\n\n");
+
+            sb.Append("public class " + ControllerName + " : KHZNController{" + "\n\n");
+
+            sb.Append(" [Autowired] \n\n");
+            sb.Append("  public " + updatedName + "  service { get; set; } \n\n");
+
+            sb.Append(ControllerConfig());
+
+            sb.Append("}  \n");
+            sb.Append("}  \n");
+
+            var fileContent = sb.ToString();
+
+            // 使用 File 类的 WriteAllText 方法创建并写入文件
+            File.WriteAllText(path, fileContent);
+        }
+
         public static string GetCountType(string columnName)
         {
             var counttype = "";
@@ -66,6 +132,58 @@ namespace Model.View
             }
 
             return counttype;
+        }
+
+        public static StringBuilder ControllerConfig()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("   /// <summary> \n");
+            sb.Append("   /// 获取一条 \n");
+            sb.Append("   /// </summary>\n");
+            sb.Append("   /// <returns></returns> \n\n");
+
+            sb.Append("public ResponseMsg load() { \n\n");
+            sb.Append(" return ResponseMsg.Success(service.Load());");
+            sb.Append(" } \n\n");
+
+            sb.Append("   /// <summary>\n");
+            sb.Append("   /// 获取全部 \n");
+            sb.Append("   /// </summary>\n");
+            sb.Append("   /// <returns></returns>   \n\n");
+
+            sb.Append("public ResponseMsg list() { \n\n");
+            sb.Append(" return ResponseMsg.Success(service.List(), service.TurnPage);");
+            sb.Append(" } \n\n");
+
+            sb.Append("   /// <summary>\n ");
+            sb.Append("   /// 添加\n ");
+            sb.Append("   /// </summary>\n");
+            sb.Append("   /// <returns></returns>   \n\n");
+
+            sb.Append("public ResponseMsg add() { \n\n");
+            sb.Append(" return ResponseMsg.Success(service.Add());");
+            sb.Append(" } \n\n");
+
+            sb.Append("   /// <summary>\n");
+            sb.Append("   /// 删除 \n");
+            sb.Append("   /// </summary>\n");
+            sb.Append("   /// <returns></returns>   \n\n");
+
+            sb.Append("public ResponseMsg delete() { \n\n");
+            sb.Append(" return ResponseMsg.Success(service.Delete());");
+            sb.Append(" } \n\n");
+
+            sb.Append("   /// <summary>\n ");
+            sb.Append("   /// 修改 \n");
+            sb.Append("   /// </summary>\n");
+            sb.Append("   /// <returns></returns>   \n\n");
+
+            sb.Append("public ResponseMsg Update() { \n\n");
+            sb.Append(" return ResponseMsg.Success(service.Update());");
+            sb.Append(" } \n\n");
+
+            return sb;
         }
     }
 }

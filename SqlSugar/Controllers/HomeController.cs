@@ -10,6 +10,7 @@ using SqlSugar;
 using SqlSugarInter.Util;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace SqlSugarInter.Controllers
 {
@@ -214,6 +215,66 @@ namespace SqlSugarInter.Controllers
                 var sqlCommand = db.Ado.SqlQuery<ViewColumn>(" SELECT column_name,udt_name  FROM INFORMATION_SCHEMA.COLUMNS  where  table_schema = @schema and table_name = @table_name ", new { schema = schema, table_name = item.table_name });
 
                 wirtecs.WirteCsFile(path, spacename, item.table_name, sqlCommand);
+            }
+
+            return "生成的实体的目标位置是：   " + path;
+        }
+
+        /// <summary>
+        /// 生成控制器
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="spacename"></param>
+        /// <param name="ControllerName"></param>
+        /// <param name="isShow"></param>
+        /// <returns></returns>
+        [HttpGet("CreateController")]
+        public string CreateController(string path, string spacename, string ControllerName, bool isShow)
+        {
+            if (!IsFilePath(path))
+            {
+                path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CSFile");
+            }
+            if (spacename == null)
+            {
+                return "必须输入命名空间";
+            }
+            string stringWithoutSpaces = Regex.Replace(ControllerName, @"\s+", "");
+            string[] strings = stringWithoutSpaces.Split(",");
+
+            foreach (var item in strings)
+            {
+                wirtecs.WirteControllerFile(path, spacename, item, isShow);
+            }
+
+            return "生成的实体的目标位置是：   " + path;
+        }
+
+        /// <summary>
+        /// 生成Services
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="spacename"></param>
+        /// <param name="ControllerName"></param>
+        /// <param name="isShow"></param>
+        /// <returns></returns>
+        [HttpGet("CreateServices")]
+        public string CreateServices(string path, string spacename, string ControllerName, bool isShow)
+        {
+            if (!IsFilePath(path))
+            {
+                path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CSFile");
+            }
+            if (spacename == null)
+            {
+                return "必须输入命名空间";
+            }
+            string stringWithoutSpaces = Regex.Replace(ControllerName, @"\s+", "");
+            string[] strings = stringWithoutSpaces.Split(",");
+
+            foreach (var item in strings)
+            {
+                wirtecs.WirteCreateServices(path, spacename, item, isShow);
             }
 
             return "生成的实体的目标位置是：   " + path;
