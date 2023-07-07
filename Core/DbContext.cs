@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection; // 引用 Microsoft.Extensions.D
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Models;
+using Newtonsoft.Json;
 
 namespace Core
 {
@@ -54,6 +55,18 @@ namespace Core
             page.data = await Context.Queryable<T>().Where(whereExpression).ToPageListAsync(page.PageIndex, page.PageSize, count);
             page.TotalCount = count;
             return page;
+        }
+
+        public virtual bool DeleteByIds(string ids)
+        {
+            var data = JsonConvert.DeserializeObject<dynamic[]>(ids);
+            return Context.Deleteable<T>().In(data).ExecuteCommand() > 0;
+        }
+
+        public virtual async Task<bool> DeleteByIdsAsync(string ids)
+        {
+            var data = JsonConvert.DeserializeObject<dynamic[]>(ids);
+            return await Context.Deleteable<T>().In(data).ExecuteCommandAsync() > 0;
         }
     }
 }

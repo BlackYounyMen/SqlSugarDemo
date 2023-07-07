@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Model;
+using Model.View;
 using Newtonsoft.Json;
 using SqlSugar;
 using SqlSugarInter.Util;
@@ -172,6 +173,50 @@ namespace SqlSugarInter.Controllers
 
             _context.DbFirst.IsCreateAttribute().CreateClassFile(path, spacename);
             return "生成的实体的目标位置是：    " + path;
+        }
+
+        /// <summary>
+        /// 生成kingbaseView实体文件
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="spacename"></param>
+        /// <param name="kingbase">链接数据库</param>
+        [HttpGet("GetKingBaseViewFile")]
+        public string GetKingBaseViewFile(string path, string spacename, string kingbase = "Host=10.168.1.138;Port=54321;database=demo;uid=system;pwd=123456;searchpath=khzn")
+        {
+            if (string.IsNullOrEmpty(kingbase)) kingbase = _configuration.GetConnectionString("kingbase");
+
+            if (!IsFilePath(path))
+            {
+                path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "CSFile");
+            }
+
+            // 获取等号后面的部分作为结果
+            string schema = ViewColumn.GetSchema(kingbase);
+
+            if (spacename == null)
+            {
+                return "必须输入命名空间";
+            }
+
+            // 创建 SQLSugar 实例
+            var db = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = kingbase, // 数据库连接字符串
+                DbType = DbType.PostgreSQL, // 数据库类型
+                IsAutoCloseConnection = true // 自动关闭数据库连接
+            });
+
+            var data = db.Ado.SqlQuery<ViewConfig>("SELECT table_schema, table_name FROM INFORMATION_SCHEMA.VIEWS WHERE table_schema = @schema", new { schema = schema });
+
+            foreach (var item in data)
+            {
+                var sqlCommand = db.Ado.SqlQuery<ViewColumn>(" SELECT column_name,udt_name  FROM INFORMATION_SCHEMA.COLUMNS  where  table_schema = @schema and table_name = @table_name ", new { schema = schema, table_name = item.table_name });
+
+                wirtecs.WirteCsFile(path, spacename, item.table_name, sqlCommand);
+            }
+
+            return "生成的实体的目标位置是：   " + path;
         }
     }
 }
