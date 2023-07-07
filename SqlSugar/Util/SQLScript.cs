@@ -15,6 +15,11 @@ namespace SqlSugarInter.Util
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// 执行sql命令
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
         public List<object[]> UsingSql(string sql)
         {
             string connectionString = _configuration.GetConnectionString("SqlServerConnection");
