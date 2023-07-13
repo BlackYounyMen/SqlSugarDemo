@@ -97,7 +97,7 @@ namespace Model.View
             sb.Append("public class " + ControllerName + " : KHZNController{" + "\n\n");
 
             sb.Append(" [Autowired] \n\n");
-            sb.Append("  public " + updatedName + "  service { get; set; } \n\n");
+            sb.Append("  public " + updatedName + "Service { get; set; } \n\n");
 
             sb.Append(ControllerConfig());
 
