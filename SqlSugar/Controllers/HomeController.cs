@@ -8,6 +8,7 @@ using Model.View;
 using Newtonsoft.Json;
 using SqlSugar;
 using SqlSugarInter.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -218,6 +219,78 @@ namespace SqlSugarInter.Controllers
             }
 
             return "生成的实体的目标位置是：   " + path;
+        }
+
+        /// <summary>
+        /// 生成kingbase字段文件
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="spacename"></param>
+        /// <param name="kingbase">链接数据库</param>
+        [HttpGet("GetKingBaseFiedsFile")]
+        public string GetKingBaseFiedsFile(string kingbase = "Host=10.168.1.138;Port=54321;database=demo;uid=system;pwd=123456;searchpath=khzn")
+        {
+            if (string.IsNullOrEmpty(kingbase)) kingbase = _configuration.GetConnectionString("kingbase");
+
+            // 获取等号后面的部分作为结果
+            string schema = ViewColumn.GetSchema(kingbase);
+
+            // 创建 SQLSugar 实例
+            var db = new SqlSugarClient(new ConnectionConfig
+            {
+                ConnectionString = kingbase, // 数据库连接字符串
+                DbType = DbType.PostgreSQL, // 数据库类型
+                IsAutoCloseConnection = true // 自动关闭数据库连接
+            });
+
+            var data = db.Ado.SqlQuery<ViewConfig>("SELECT table_schema, table_name FROM INFORMATION_SCHEMA.VIEWS WHERE table_schema = @schema", new { schema = schema });
+
+            string ls = "";
+
+            foreach (var item in data)
+            {
+                var sqlCommand = db.Ado.SqlQuery<ViewColumn>(" SELECT column_name,udt_name  FROM INFORMATION_SCHEMA.COLUMNS  where  table_schema = @schema and table_name = @table_name ", new { schema = schema, table_name = item.table_name });
+
+                ls += JsonConvert.SerializeObject(sqlCommand);
+            }
+
+            return ls;
+        }
+
+        /// <summary>
+        /// Demo
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetList")]
+        public List<Models.users> GetList()
+        {
+            List<Models.users> users1 = new List<Models.users>();
+            Models.users users = new Models.users();
+            users.id = 0;
+            users.username = "fsa";
+            users.pwd = "23";
+            users.peoplename = "gsdagsadf";
+            users.sex = 1;
+            users.card_type = 1;
+            users.card_no = "fawfew";
+            users.birthday = DateTime.Now;
+            users.telephone = "15974976164";
+            users.status = 1;
+            users.headimg_id = 1;
+            users.meta = "esgerrewge";
+            users.create_organize_id = 1;
+            users.create_organize_title = "gresgresaegt";
+            users.create_user_id = 45;
+            users.create_peoplename = "各色公认为";
+            users.create_on = DateTime.Now;
+            users.modify_organize_id = 1;
+            users.modify_organize_title = "grehesgbtg";
+            users.modify_user_id = 5;
+            users.modify_peoplename = "hesgtsre";
+            users.modify_on = DateTime.Now;
+
+            users1.Add(users);
+            return users1;
         }
 
         /// <summary>
