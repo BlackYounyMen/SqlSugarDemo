@@ -8,6 +8,7 @@
   <ItemGroup>
     <PackageReference Include="LinqKit" Version="1.2.4" />
     <PackageReference Include="Masuit.Tools.Net" Version="2.6.2" />
+    <PackageReference Include="NPOI" Version="2.7.1" />
     <PackageReference Include="SqlSugarCore" Version="5.1.4.86" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
@@ -15,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\Model\Model.csproj" />
+    <ProjectReference Include="D:\ExcelCtr\ExcelCtr.csproj" />
   </ItemGroup>
 
   <ItemGroup>

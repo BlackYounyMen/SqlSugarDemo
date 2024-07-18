@@ -65,6 +65,7 @@ namespace SqlSugar
                 c.SwaggerEndpoint("/swagger/File/swagger.json", "文件操控");
                 c.SwaggerEndpoint("/swagger/Base/swagger.json", "基础使用法");
                 c.SwaggerEndpoint("/swagger/Package/swagger.json", "封装使用法");
+                c.SwaggerEndpoint("/swagger/Excel/swagger.json", "表格操作法");
             });
             app.UseEndpoints(endpoints =>
             {
@@ -105,7 +106,11 @@ namespace SqlSugar
                     Version = "v1.0",
                     Title = "封装使用法"
                 });
-
+                options.SwaggerDoc("Excel", new OpenApiInfo
+                {
+                    Version = "v1.0",
+                    Title = "表格操作法"
+                });
                 //按照分组取api文档
                 options.DocInclusionPredicate((docName, apiDes) =>
                 {

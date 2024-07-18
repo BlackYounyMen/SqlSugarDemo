@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{D109C813-B20E-4799-8764-8F626F2C273D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tool", "Tool\Tool.csproj", "{FF6F72E3-2798-430A-84DA-CCEA13194F6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tool", "Tool\Tool.csproj", "{FF6F72E3-2798-430A-84DA-CCEA13194F6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelCtr", "D:\ExcelCtr\ExcelCtr.csproj", "{836DBE30-8CD1-4FD9-8971-42A91FD5BEA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{FF6F72E3-2798-430A-84DA-CCEA13194F6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF6F72E3-2798-430A-84DA-CCEA13194F6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF6F72E3-2798-430A-84DA-CCEA13194F6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{836DBE30-8CD1-4FD9-8971-42A91FD5BEA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{836DBE30-8CD1-4FD9-8971-42A91FD5BEA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{836DBE30-8CD1-4FD9-8971-42A91FD5BEA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{836DBE30-8CD1-4FD9-8971-42A91FD5BEA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
